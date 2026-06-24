@@ -2,12 +2,26 @@
   <!-- Convert depth camera to virtual floor-level laser scan -->
   <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="depth_to_scan">
     <remap from="cloud_in" to="/xtion/depth_registered/points"/>
-    <remap from="scan" to="rgbd_scan"/>
+    <remap from="scan" to="/rgbd_scan"/>
     <rosparam file="$(find warehouse_robot_danish)/config/depth_scan_params.yaml" command="load"/>
   </node>
 
-  <!-- Run SLAM mapping using the depth-derived scan instead of the chest-height LiDAR -->
+  <!-- Merge the 360-degree LiDAR and the depth camera scan into a single scan to prevent map warping -->
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+    <param name="destination_frame" value="base_footprint"/>
+    <param name="cloud_destination_topic" value="/merged_cloud"/>
+    <param name="scan_destination_topic" value="/scan_merged"/>
+    <param name="laserscan_topics" value ="/scan_raw /rgbd_scan" />
+    <param name="angle_min" value="-3.141592"/>
+    <param name="angle_max" value="3.141592"/>
+    <param name="angle_increment" value="0.00589"/>
+    <param name="scan_time" value="0.0333333"/>
+    <param name="range_min" value="0.05"/>
+    <param name="range_max" value="25.0"/>
+  </node>
+
+  <!-- Run SLAM mapping using the merged scan -->
   <include file="$(find warehouse_robot_danish)/launch/tiago_mapping.launch">
-    <arg name="scan_topic" value="rgbd_scan"/>
+    <arg name="scan_topic" value="/scan_merged"/>
   </include>
 </launch>
