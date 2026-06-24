@@ -9,7 +9,7 @@ class StationMarkers:
         self.pub = rospy.Publisher('/warehouse/station_markers', MarkerArray, queue_size=1, latch=True)
 
         self.stations = [
-            {"id": 0, "name": "HOME BASE", "x": 0.45, "y": -1.75, "color": (0.0, 1.0, 0.0)},      # Green
+            {"id": 0, "name": "HOME BASE", "x": 0.21, "y": -0.83, "color": (0.0, 1.0, 0.0)},      # Green
             {"id": 1, "name": "SHELF A", "x": 8.56, "y": -3.34, "color": (0.0, 0.8, 1.0)},        # Light Blue
             {"id": 2, "name": "SHELF B", "x": 8.65, "y": -6.9, "color": (0.0, 0.4, 1.0)},        # Dark Blue
             {"id": 3, "name": "PICKUP ZONE", "x": 4.55, "y": -10.62, "color": (1.0, 0.64, 0.0)},  # Orange
