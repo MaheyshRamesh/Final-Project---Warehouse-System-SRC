@@ -34,13 +34,18 @@ class WarehouseUI:
         # Waypoints loaded from W9 drafts - these will be re-calibrated in RViz shortly.
         self.points = {
             "Home": (0.21, -0.83, 0.0),
+            "Home Approach": (2.16, -1.43, 3.14),
             "Shelf A": (8.56, -3.34, -1.57),
+            "Shelf A Exit": (7.04, -3.39, 3.14),
             "Shelf B": (8.65, -6.9, 1.57),
+            "Shelf B Exit": (6.97, -6.98, 3.14),
             "Pickup": (4.55, -10.62, 3.14),
-            "Drop-off": (6.89, 6.44, 0.0)
+            "Drop-off": (6.89, 6.44, 0.0),
+            "Main Aisle": (3.35, -2.35, 3.14)
         }
 
-        self.route = ["Home", "Shelf A", "Shelf B", "Pickup", "Drop-off", "Home"]
+        self.route = ["Home", "Home Approach", "Shelf A", "Shelf A Exit", "Shelf B", "Shelf B Exit", "Pickup", "Drop-off", "Main Aisle", "Home Approach", "Home"]
+        self.current_station = "Home"
 
         # UI Setup
         self.root = tk.Tk()
@@ -96,7 +101,25 @@ class WarehouseUI:
             return False
 
     def run_thread(self, point_name):
-        threading.Thread(target=self.send_goal, args=(point_name,), daemon=True).start()
+        threading.Thread(target=self.dispatch_logic, args=(point_name,), daemon=True).start()
+
+    def dispatch_logic(self, point_name):
+        # Auto-route out of narrow aisles if manually dispatched elsewhere
+        if self.current_station == "Shelf A" and point_name not in ["Shelf A", "Shelf A Exit"]:
+            if not self.send_goal("Shelf A Exit"): return
+        elif self.current_station == "Shelf B" and point_name not in ["Shelf B", "Shelf B Exit"]:
+            if not self.send_goal("Shelf B Exit"): return
+        elif self.current_station == "Home" and point_name not in ["Home", "Home Approach"]:
+            if not self.send_goal("Home Approach"): return
+        elif self.current_station == "Drop-off" and point_name not in ["Drop-off", "Main Aisle"]:
+            if not self.send_goal("Main Aisle"): return
+            
+        # Intercept incoming route to Home
+        if point_name == "Home" and self.current_station != "Home Approach":
+            if not self.send_goal("Home Approach"): return
+            
+        if self.send_goal(point_name):
+            self.current_station = point_name
 
     def run_full_mission(self):
         self.set_status("Starting Full Autonomous Mission", color="#FF9800")
@@ -104,6 +127,7 @@ class WarehouseUI:
             if not self.send_goal(point):
                 self.set_status(f"Mission aborted at {point}", color="#f44336")
                 return
+            self.current_station = point
             rospy.sleep(2)
         self.set_status("Full Mission Completed Successfully!", color="#4CAF50")
 

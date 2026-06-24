@@ -25,10 +25,10 @@ class StationMarkers:
         marker.type = Marker.TEXT_VIEW_FACING
         marker.action = Marker.ADD
 
-        # Position (Hover 2.5 meters above ground)
+        # Position (Hover 4.0 meters above ground)
         marker.pose.position.x = station["x"]
         marker.pose.position.y = station["y"]
-        marker.pose.position.z = 2.5
+        marker.pose.position.z = 4.0
         marker.pose.orientation.w = 1.0
 
         # Scale (Text size)
