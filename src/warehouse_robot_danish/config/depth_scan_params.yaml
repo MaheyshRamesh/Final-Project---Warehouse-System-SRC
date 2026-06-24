@@ -1,0 +1,11 @@
+# Floor-level virtual scan from depth camera
+min_height: 0.05        # 5cm above ground (ignore floor noise)
+max_height: 1.5         # capture everything up to 1.5m
+angle_min: -1.047       # -60 degrees (depth camera FOV)
+angle_max: 1.047        # +60 degrees
+angle_increment: 0.005  # ~0.3 degree resolution
+scan_time: 0.1          # 10Hz
+range_min: 0.3          # min depth camera range
+range_max: 5.0          # max useful depth range
+target_frame: base_footprint
+use_inf: true

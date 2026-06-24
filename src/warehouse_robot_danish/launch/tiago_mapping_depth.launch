@@ -1,0 +1,13 @@
+<launch>
+  <!-- Convert depth camera to virtual floor-level laser scan -->
+  <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="depth_to_scan">
+    <remap from="cloud_in" to="/xtion/depth_registered/points"/>
+    <remap from="scan" to="rgbd_scan"/>
+    <rosparam file="$(find warehouse_robot_danish)/config/depth_scan_params.yaml" command="load"/>
+  </node>
+
+  <!-- Run SLAM mapping using the depth-derived scan instead of the chest-height LiDAR -->
+  <include file="$(find warehouse_robot_danish)/launch/tiago_mapping.launch">
+    <arg name="scan_topic" value="rgbd_scan"/>
+  </include>
+</launch>
