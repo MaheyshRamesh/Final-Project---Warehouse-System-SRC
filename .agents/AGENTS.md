@@ -14,6 +14,14 @@ This file serves as the definitive reference for "what went right" and all the "
    - *Note:* The `[WARN] Couldn't set gain on joystick force feedback: Bad file descriptor` error is completely harmless.
 5. **Map Saving:** The `map_saver` outputs a `.yaml` and a `.pgm` file. These two files are entirely codependent and must always be kept together in the same directory (`~/tiago_public_ws/src/warehouse_robot_danish/maps/`).
 
+## Phase 1: Known Weakness — Incomplete Map Coverage
+**Problem:** The current SLAM map was built using only the 2D LiDAR (`/scan_raw`), which is mounted at TIAGo's chest height (~0.75m). This means:
+- Shelf legs, low boxes, pallets, and any obstacle below the scan line are **completely invisible** in the saved `.pgm` map.
+- During autonomous navigation, the local costmap also only uses the 2D LiDAR, so the robot **cannot detect or avoid** low obstacles in real-time. It drives into them and gets stuck instead of reversing and re-routing.
+- Waypoint coordinates need constant manual recalibration because the map doesn't accurately represent shelf boundaries.
+
+**Status:** Not yet fixed. See `map_improvement_plan.md` in the project root for the full technical plan (depth camera fusion for SLAM + live costmap upgrade).
+
 ## Phase 2: Autonomous Navigation - Initialization Rules
 When transitioning from the mapping phase to the autonomous task phase using `warehouse_map.yaml`, the agent MUST follow these setup steps:
 1. Load the map via the navigation launch file (`tiago_navigation.launch`).
