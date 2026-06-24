@@ -14,13 +14,25 @@ This file serves as the definitive reference for "what went right" and all the "
    - *Note:* The `[WARN] Couldn't set gain on joystick force feedback: Bad file descriptor` error is completely harmless.
 5. **Map Saving:** The `map_saver` outputs a `.yaml` and a `.pgm` file. These two files are entirely codependent and must always be kept together in the same directory (`~/tiago_public_ws/src/warehouse_robot_danish/maps/`).
 
-## Phase 1: Known Weakness — Incomplete Map Coverage
-**Problem:** The current SLAM map was built using only the 2D LiDAR (`/scan_raw`), which is mounted at TIAGo's chest height (~0.75m). This means:
-- Shelf legs, low boxes, pallets, and any obstacle below the scan line are **completely invisible** in the saved `.pgm` map.
-- During autonomous navigation, the local costmap also only uses the 2D LiDAR, so the robot **cannot detect or avoid** low obstacles in real-time. It drives into them and gets stuck instead of reversing and re-routing.
-- Waypoint coordinates need constant manual recalibration because the map doesn't accurately represent shelf boundaries.
+## Phase 1 & 2: Depth Camera Fusion & Live Obstacle Avoidance (Fixed)
+**Previous Problem:** The original SLAM map was built using only the 2D LiDAR (`/scan_raw`), which missed low obstacles (shelf legs, boxes). The local costmap was also blind to them, causing collisions.
+**Fix:** 
+1. Used `pointcloud_to_laserscan` to convert the depth camera to a floor-level scan (`/rgbd_scan`).
+2. Merged `/scan_raw` and `/rgbd_scan` using `laserscan_multi_merger` to create the static map. (Merging both prevents the SLAM map from tearing/warping due to the depth camera's narrow FOV).
+3. Configured `move_base`'s local and global costmaps to ingest `/rgbd_scan` simultaneously, ensuring live real-time detection of low obstacles.
 
-**Status:** Not yet fixed. See `map_improvement_plan.md` in the project root for the full technical plan (depth camera fusion for SLAM + live costmap upgrade).
+**How to verify Live Obstacle Avoidance:**
+1. **Setup RViz:**
+    - Wait for the map to load.
+    - Do your 2D Pose Estimate to align TIAGo.
+    - Add the MarkerArray ( `/warehouse/station_markers` ) to see the 3D text.  
+    - Crucial new step: Click Add -> By Topic -> `/move_base/local_costmap/costmap` -> Map to visualize the live costmap. You will see a glowing halo around obstacles.
+2. **Launch the UI:**
+    - Go to the 5th terminal tab and press ENTER to bring up the Operator Panel.
+3. **The Test:**
+    - In Gazebo, use the top toolbar to spawn a random box (like a cube) and drop it directly in the middle of the aisle between Home and Shelf A. Make sure it's low enough that the chest-height LiDAR would miss it.
+    - In the UI, click "Go to Shelf A".
+    - You will see the local costmap instantly highlight the low box in red, and the robot will dynamically reroute itself around it.
 
 ## Phase 2: Autonomous Navigation - Initialization Rules
 When transitioning from the mapping phase to the autonomous task phase using `warehouse_map.yaml`, the agent MUST follow these setup steps:
