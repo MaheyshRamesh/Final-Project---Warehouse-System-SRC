@@ -49,3 +49,30 @@ When transitioning from the mapping phase to the autonomous task phase using `wa
 This bridges the two topics so `move_base` receives the laser data it needs. After this fix, the robot drives immediately.
 
 **How to Verify:** Run `rostopic info /scan` — it must show `scan_relay` as a Publisher. If Publishers shows `None`, the relay is missing and the robot will not move.
+
+## Version Control (Git)
+This project directory (`~/Documents/TTTC2343-Autonomous-Warehouse-Robot-Group-11--main/`) is tracked with Git.
+
+**Config:**
+- User: `Group 11` / `warehouse-robot@group11`
+- Branch: `master`
+
+**Key Commits (oldest → newest):**
+| Hash | Description |
+|------|-------------|
+| `2291c29` | **Phase 2 complete** — SLAM map, operator UI, station markers, scan relay fix. This is the known-good baseline. |
+| `aabfb97` | Experiment: swapped to AWS pre-built map (002). Did not work well. |
+| `ff8d153` | Reverted back to original SLAM map. Current stable state. |
+
+**How to Revert:**
+```bash
+cd ~/Documents/TTTC2343-Autonomous-Warehouse-Robot-Group-11--main
+git log --oneline           # see all commits
+git checkout <hash> -- <file>  # revert specific file(s)
+git reset --hard <hash>     # nuclear revert to a specific commit
+```
+
+**Before Experimenting:** Always commit the current working state first:
+```bash
+git add -A && git commit -m "description of current state"
+```
