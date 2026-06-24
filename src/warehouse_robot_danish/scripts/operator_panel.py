@@ -33,11 +33,11 @@ class WarehouseUI:
 
         # Waypoints loaded from W9 drafts - these will be re-calibrated in RViz shortly.
         self.points = {
-            "Home": (1.31, -2.23, 0.0),
-            "Shelf A": (8.75, -2.20, 0.0),
-            "Shelf B": (8.75, -7.31, 0.0),
-            "Pickup": (2.00, -9.16, 0.0),
-            "Drop-off": (7.08, 5.49, -1.626)
+            "Home": (0.45, -1.75, 0.0),
+            "Shelf A": (8.56, -3.34, -1.57),
+            "Shelf B": (8.65, -6.9, 1.57),
+            "Pickup": (4.55, -10.62, 3.14),
+            "Drop-off": (6.89, 6.44, 0.0)
         }
 
         self.route = ["Home", "Shelf A", "Shelf B", "Pickup", "Drop-off", "Home"]
