@@ -7,6 +7,10 @@ killall -9 gzserver gzclient rosmaster roscore python3 python 2>/dev/null || tru
 pkill -f ros 2>/dev/null || true
 sleep 2
 
+echo "Injecting Costmap Recovery Fix into TIAGo Navigation Config..."
+cp ~/Documents/TTTC2343-Autonomous-Warehouse-Robot-Group-11--main/src/warehouse_robot_danish/config/recovery_behaviors.yaml ~/tiago_public_ws/src/pal_navigation_cfg_public/pal_navigation_cfg_tiago/config/base/common/recovery_behaviors.yaml
+
+
 echo "Launching Phase 2 Navigation Stack..."
 
 gnome-terminal --window --geometry=120x35 \
