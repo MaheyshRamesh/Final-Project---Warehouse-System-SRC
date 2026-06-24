@@ -1,0 +1,13 @@
+<launch>
+  <arg name="x" default="-7.20"/>
+  <arg name="y" default="4.20"/>
+  <arg name="z" default="0.05"/>
+  <arg name="yaw" default="0.0"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro"/>
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_turtlebot3_burger"
+        args="-urdf -model turtlebot3_burger -param robot_description -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw)"
+        output="screen"/>
+</launch>

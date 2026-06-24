@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find warehouse_robot)/launch/warehouse_world.launch"/>
+  <include file="$(find warehouse_robot)/launch/spawn_robot.launch"/>
+
+  <node pkg="warehouse_robot" type="zone_detector.py" name="warehouse_zone_detector" output="screen"/>
+
+  <node pkg="warehouse_robot" type="mission_controller.py" name="warehouse_mission_controller" output="screen"/>
+</launch>

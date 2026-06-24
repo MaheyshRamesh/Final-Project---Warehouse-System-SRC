@@ -1,0 +1,7 @@
+# PS5 DualSense Controller Config for TIAGo Teleop
+# This maps the controller for safe manual driving.
+axis_linear: 1
+scale_linear: 0.7
+axis_angular: 0
+scale_angular: 0.4
+enable_button: 0 # X (Cross) Button

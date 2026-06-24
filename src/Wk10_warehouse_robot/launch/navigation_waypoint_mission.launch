@@ -1,0 +1,4 @@
+<launch>
+  <!-- Use this after you already have TurtleBot3 navigation running with move_base. -->
+  <node pkg="warehouse_robot" type="waypoint_mission.py" name="warehouse_waypoint_mission" output="screen"/>
+</launch>

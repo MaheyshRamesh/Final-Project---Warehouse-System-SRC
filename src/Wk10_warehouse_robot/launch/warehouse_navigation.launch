@@ -1,0 +1,11 @@
+<launch>
+  <param name="/use_sim_time" value="true"/>
+  <env name="TURTLEBOT3_MODEL" value="burger"/>
+
+  <arg name="map_file" default="$(find warehouse_robot)/maps/warehouse_map.yaml"/>
+
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+    <arg name="map_file" value="$(arg map_file)"/>
+    <arg name="open_rviz" value="true"/>
+  </include>
+</launch>

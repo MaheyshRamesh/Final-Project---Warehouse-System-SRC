@@ -1,0 +1,17 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="paused" default="false"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(find aws_robomaker_small_warehouse_world)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="TURTLEBOT3_MODEL" value="burger"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find warehouse_robot_danish)/worlds/danish_inventory_delivery_warehouse.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true"/>
+  </include>
+</launch>

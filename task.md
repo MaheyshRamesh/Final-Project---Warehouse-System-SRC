@@ -1,0 +1,10 @@
+- `[x]` Increase Clearance
+  - `[x]` Update `front_clearance` to 0.25
+  - `[x]` Update `side_clearance` to 0.25
+- `[x]` Implement Map-Aware Exploration
+  - `[x]` Import `tf`, `math`, `OccupancyGrid`
+  - `[x]` Add `tf.TransformListener` and `/map` subscriber
+  - `[x]` Write `evaluate_unexplored(angle)` method to ray-cast into the map
+  - `[x]` Update `choose_turn_direction()` to evaluate left vs right map unknowns
+- `[x]` Restart the mapping node
+- `[x]` Verify robot explores towards unknown areas

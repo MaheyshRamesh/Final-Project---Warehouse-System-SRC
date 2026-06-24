@@ -1,0 +1,22 @@
+<launch>
+  <arg name="map_file" default="$(find warehouse_robot_danish)/maps/warehouse_map.yaml"/>
+  <arg name="public_sim" default="true"/>
+
+  <!-- Run the map server to serve the saved warehouse map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- Include TIAGo's standard AMCL localization -->
+  <include file="$(find tiago_2dnav)/launch/localization.launch">
+    <arg name="localization" value="amcl"/>
+  </include>
+
+  <!-- Relay /scan_raw to /scan so move_base costmap receives laser data -->
+  <node pkg="topic_tools" type="relay" name="scan_relay" args="scan_raw scan"/>
+
+  <!-- Include TIAGo's standard move_base navigation -->
+  <include file="$(find tiago_2dnav)/launch/move_base.launch">
+    <arg name="public_sim" value="$(arg public_sim)"/>
+    <arg name="local_planner" value="teb"/>
+  </include>
+
+</launch>

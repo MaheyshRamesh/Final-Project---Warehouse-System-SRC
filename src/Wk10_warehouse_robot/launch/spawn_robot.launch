@@ -1,0 +1,16 @@
+<launch>
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="-3.8"/>
+  <arg name="z" default="0.05"/>
+  <arg name="yaw" default="1.5708"/>
+
+  <env name="TURTLEBOT3_MODEL" value="burger"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro"/>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_turtlebot3_burger"
+        args="-urdf -model turtlebot3_burger -param robot_description -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw)"/>
+</launch>

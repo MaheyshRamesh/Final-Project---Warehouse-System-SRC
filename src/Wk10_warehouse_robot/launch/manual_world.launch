@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find warehouse_robot)/launch/warehouse_world.launch"/>
+  <include file="$(find warehouse_robot)/launch/spawn_robot.launch"/>
+</launch>
