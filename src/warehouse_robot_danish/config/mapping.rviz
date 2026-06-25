@@ -36,6 +36,18 @@ Toolbars:
 Visualization Manager:
   Class: ""
   Displays:
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /warehouse/qr_image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: QR Scanner Panel
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz/Grid

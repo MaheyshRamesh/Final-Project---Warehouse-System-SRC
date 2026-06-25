@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="qr_dropoff">
+    <static>true</static>
+    <link name="link">
+      <visual name="board_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.50 0.50</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://qr_dropoff/materials/scripts</uri>
+            <uri>model://qr_dropoff/materials/textures</uri>
+            <name>QRBoard/qr_dropoff</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

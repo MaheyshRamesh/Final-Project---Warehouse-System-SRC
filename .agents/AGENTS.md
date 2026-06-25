@@ -70,12 +70,21 @@ This bridges the two topics so `move_base` receives the laser data it needs. Aft
 
 **How to Verify:** Run `rostopic info /scan` — it must show `scan_relay` as a Publisher. If Publishers shows `None`, the relay is missing and the robot will not move.
 
+## Phase 3: QR Code Verification System Gotchas
+1. **Missing `pip` and Dependencies:** The standard TIAGo ROS Noetic container doesn't always have `pip` or Python 3 image processing libraries installed. 
+   - *Fix:* If you can't install `qrcode`, use the public API `api.qrserver.com` to download generated QR codes on the fly using `urllib.request`.
+2. **OpenCV Video Encoding (`cv_bridge`):** TIAGo's `/xtion/rgb/image_raw` may not publish in standard OpenCV BGR format.
+   - *Fix:* Always explicitly enforce `"bgr8"` when calling `self.bridge.imgmsg_to_cv2(data, "bgr8")` in `qr_scanner_node.py`.
+3. **Gazebo Model Path:** Gazebo will fail to load the QR board models unless it knows where they are.
+   - *Fix:* Ensure `export GAZEBO_MODEL_PATH=~/tiago_public_ws/src/warehouse_robot_danish/models:${GAZEBO_MODEL_PATH}` is set in the launch script.
+4. **QR Code Distance Limit:** TIAGo's camera struggles to scan 0.5m QR codes from further than ~2 meters away. The boards must be positioned fairly close to the final waypoints.
+
 ## Version Control (Git)
 This project directory (`~/Documents/TTTC2343-Autonomous-Warehouse-Robot-Group-11--main/`) is tracked with Git.
 
 **Config:**
 - User: `Group 11` / `warehouse-robot@group11`
-- Branch: `master`
+- Branch: `main`
 
 **Key Commits (oldest → newest):**
 | Hash | Description |
@@ -83,6 +92,7 @@ This project directory (`~/Documents/TTTC2343-Autonomous-Warehouse-Robot-Group-1
 | `2291c29` | **Phase 2 complete** — SLAM map, operator UI, station markers, scan relay fix. This is the known-good baseline. |
 | `aabfb97` | Experiment: swapped to AWS pre-built map (002). Did not work well. |
 | `ff8d153` | Reverted back to original SLAM map. Current stable state. |
+| `c8a10df` | Final Week 9 System: Full Autonomous Navigation with Advanced Obstacle Avoidance |
 
 **How to Revert:**
 ```bash

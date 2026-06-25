@@ -24,6 +24,5 @@
   <exec_depend>aws_robomaker_small_warehouse_world</exec_depend>
 
   <export>
-    <gazebo_ros gazebo_model_path="${prefix}/models"/>
   </export>
 </package>

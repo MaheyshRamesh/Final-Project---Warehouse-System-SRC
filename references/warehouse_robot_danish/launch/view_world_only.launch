@@ -1,0 +1,3 @@
+<launch>
+  <include file="$(find warehouse_robot_danish)/launch/custom_warehouse_world.launch"/>
+</launch>

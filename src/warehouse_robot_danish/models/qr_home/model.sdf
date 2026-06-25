@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="qr_home">
+    <static>true</static>
+    <link name="link">
+      <visual name="board_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.50 0.50</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://qr_home/materials/scripts</uri>
+            <uri>model://qr_home/materials/textures</uri>
+            <name>QRBoard/qr_home</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

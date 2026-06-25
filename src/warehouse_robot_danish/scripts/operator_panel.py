@@ -3,6 +3,7 @@
 import sys
 import math
 import threading
+import time
 import tkinter as tk
 
 import rospy
@@ -11,6 +12,7 @@ import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import Quaternion
 from actionlib_msgs.msg import GoalStatus
+from std_msgs.msg import String
 
 
 def yaw_to_quaternion(yaw):
@@ -43,21 +45,35 @@ class WarehouseUI:
             "Drop-off": (6.89, 6.44, 0.0),
             "Main Aisle": (3.35, -2.35, 3.14)
         }
+        
+        self.qr_expected = {
+            "Home": "HOME_BASE",
+            "Shelf A": "SHELF_A",
+            "Shelf B": "SHELF_B",
+            "Pickup": "PICKUP_ZONE",
+            "Drop-off": "DROPOFF_ZONE"
+        }
 
         self.route = ["Home", "Home Approach", "Shelf A", "Shelf A Exit", "Shelf B", "Shelf B Exit", "Pickup", "Drop-off", "Main Aisle", "Home Approach", "Home"]
         self.current_station = "Home"
 
+        self.last_qr_detected = ""
+        rospy.Subscriber('/warehouse/qr_detection', String, self.qr_callback)
+
         # UI Setup
         self.root = tk.Tk()
         self.root.title("Warehouse Robot Control Panel")
-        self.root.geometry("450x550")
+        self.root.geometry("450x600")
         self.root.configure(bg="#2d2d2d")
 
         title = tk.Label(self.root, text="Warehouse Operator Panel", font=("Arial", 16, "bold"), bg="#2d2d2d", fg="white")
         title.pack(pady=15)
 
         self.status_label = tk.Label(self.root, text="Status: Online & Ready", font=("Arial", 11, "bold"), bg="#2d2d2d", fg="#4CAF50")
-        self.status_label.pack(pady=10)
+        self.status_label.pack(pady=5)
+        
+        self.qr_label = tk.Label(self.root, text="QR: Idle", font=("Arial", 11, "bold"), bg="#2d2d2d", fg="white")
+        self.qr_label.pack(pady=5)
 
         for point_name in self.points:
             btn = tk.Button(self.root, text=f"Dispatch to {point_name}", font=("Arial", 10), width=35, height=2, bg="#3d3d3d", fg="white", command=lambda name=point_name: self.run_thread(name))
@@ -69,9 +85,15 @@ class WarehouseUI:
         cancel_btn = tk.Button(self.root, text="EMERGENCY STOP (Cancel Goal)", font=("Arial", 10, "bold"), width=35, height=2, bg="#f44336", fg="white", command=self.cancel_goal)
         cancel_btn.pack(pady=4)
 
+    def qr_callback(self, msg):
+        self.last_qr_detected = msg.data
+
     def set_status(self, text, color="#4CAF50"):
         self.status_label.config(text=f"Status: {text}", fg=color)
         rospy.loginfo(text)
+        
+    def set_qr_status(self, text, color="white"):
+        self.qr_label.config(text=text, fg=color)
 
     def send_goal(self, point_name):
         x, y, yaw = self.points[point_name]
@@ -85,6 +107,9 @@ class WarehouseUI:
         goal.target_pose.pose.orientation = yaw_to_quaternion(yaw)
 
         self.set_status(f"Navigating to {point_name}...", color="#FF9800")
+        self.set_qr_status("QR: Idle", "white")
+        self.last_qr_detected = "" # Clear previous scan
+        
         self.client.send_goal(goal)
         finished = self.client.wait_for_result(rospy.Duration(120))
 
@@ -94,6 +119,23 @@ class WarehouseUI:
             return False
 
         if self.client.get_state() == GoalStatus.SUCCEEDED:
+            if point_name in self.qr_expected:
+                self.set_qr_status("QR: Scanning...", "#FF9800")
+                expected_str = self.qr_expected[point_name]
+                matched = False
+                for _ in range(20): # 10 seconds total wait
+                    if self.last_qr_detected == expected_str:
+                        matched = True
+                        break
+                    time.sleep(0.5)
+                
+                if matched:
+                    self.set_qr_status(f"QR Match! {expected_str}", "#4CAF50")
+                    time.sleep(2) # Show match briefly
+                    self.set_qr_status(f"Arrived at {point_name} \u2714", "#4CAF50")
+                else:
+                    self.set_qr_status("QR: No code found \u26A0", "#f44336")
+            
             self.set_status(f"Arrived at {point_name}", color="#4CAF50")
             return True
         else:

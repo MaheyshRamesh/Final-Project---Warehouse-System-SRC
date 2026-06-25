@@ -1,0 +1,13 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <include file="$(find warehouse_robot_danish)/launch/custom_warehouse_world.launch">
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <include file="$(find warehouse_robot_danish)/launch/spawn_turtlebot3_burger.launch"/>
+
+  <node pkg="warehouse_robot_danish" type="inventory_status_publisher.py" name="inventory_status_publisher" output="screen"/>
+  <node pkg="warehouse_robot_danish" type="operator_panel.py" name="operator_panel" output="screen"/>
+  <node pkg="warehouse_robot_danish" type="mission_controller.py" name="mission_controller" output="screen"/>
+</launch>

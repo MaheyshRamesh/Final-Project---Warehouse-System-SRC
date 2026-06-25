@@ -1,0 +1,18 @@
+material QRBoard/qr_shelf_b
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.0 1.0 1.0 1.0
+      diffuse 1.0 1.0 1.0 1.0
+      emissive 0.8 0.8 0.8 1.0
+      texture_unit
+      {
+        texture qr_shelf_b.png
+        filtering anisotropic
+        max_anisotropy 16
+      }
+    }
+  }
+}
