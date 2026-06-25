@@ -106,3 +106,10 @@ git reset --hard <hash>     # nuclear revert to a specific commit
 ```bash
 git add -A && git commit -m "description of current state"
 ```
+
+## Phase 3: Gazebo World Editing & Saving Gotchas (CRITICAL)
+1. **The Gazebo Scale Tool Bug (Galaxy-sized Shelves):** If you use the Scale Tool (box icon) in Gazebo on any object (especially shelves or QR codes) instead of the Translate Tool, Gazebo may aggressively calculate floating point math and save astronomical scales like `2.733e+23` inside the `.world` file's `<state>` block. This will instantly freeze or crash the physics engine upon launch.
+   - *Fix:* Surgically edit the `.world` file with Python or a text editor to remove the corrupted `<size>` tags or extract the user's `<pose>` tags and inject them into a clean copy of the world file.
+2. **The Baked-in TIAGo Clone Bug:** If you click `File -> Save World As` while the TIAGo simulation is actively running, Gazebo permanently bakes a `<model name='tiago'>` block directly into the XML of the world file. Because our launch script (`run_autonomous_navigation.sh`) automatically spawns TIAGo on launch, Gazebo will attempt to spawn the real robot INSIDE the baked clone. This causes infinite collision forces that instantly freeze the simulation on startup.
+   - *Fix:* You MUST manually edit the `.world` file and completely remove both the `<model name='tiago'>...</model>` definition and the `<model name='tiago'>` state block inside `<state world_name='default'>`.
+3. **Poles vs Stands:** We designed a custom `qr_stand` (1-meter cylinder). Use this instead of stretching default `unit_cylinder` models to avoid scaling bugs.
